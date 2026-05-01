@@ -204,6 +204,8 @@ function playSong(i) {
   nowPlaying.innerText = `Now Playing: ${song.title} — ${song.artist}`;
 
   highlight(i);
+
+  updateMediaSession(song);
 }
 
 // --------------------
@@ -233,6 +235,38 @@ function goBack() {
   library.style.display = "grid";
   audio.pause();
   nowPlaying.innerText = "Nothing playing";
+}
+  function updateMediaSession(song) {
+  if (!('mediaSession' in navigator)) return;
+
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: song.title,
+    artist: song.artist,
+    album: currentAlbum.name,
+    artwork: [
+      { src: currentAlbum.cover, sizes: "512x512", type: "image/jpg" }
+    ]
+  });
+
+  navigator.mediaSession.setActionHandler("play", () => {
+    audio.play();
+  });
+
+  navigator.mediaSession.setActionHandler("pause", () => {
+    audio.pause();
+  });
+
+  navigator.mediaSession.setActionHandler("previoustrack", () => {
+    if (!currentAlbum) return;
+    currentIndex = (currentIndex - 1 + currentAlbum.songs.length) % currentAlbum.songs.length;
+    playSong(currentIndex);
+  });
+
+  navigator.mediaSession.setActionHandler("nexttrack", () => {
+    if (!currentAlbum) return;
+    currentIndex = (currentIndex + 1) % currentAlbum.songs.length;
+    playSong(currentIndex);
+  });
 }
 
 </script>
