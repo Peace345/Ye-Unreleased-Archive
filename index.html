@@ -9,13 +9,9 @@
       background: #0b0b0b;
       color: white;
       font-family: Arial;
-      .header {
-  font-size: 26px;
-  font-weight: 700;
-  padding: 20px 20px 0 20px;
     }
 
-    /* LIBRARY GRID */
+    /* LIBRARY */
     .library {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -30,7 +26,6 @@
     .album img {
       width: 100%;
       border-radius: 12px;
-      display: block;
     }
 
     .album-title {
@@ -42,13 +37,11 @@
     .player {
       display: none;
       padding: 20px;
-      text-align: center;
     }
 
     .cover {
       width: 220px;
       border-radius: 12px;
-      margin-bottom: 10px;
     }
 
     .song {
@@ -75,13 +68,23 @@
       border-radius: 6px;
       color: white;
     }
+
+    .nowPlaying {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #111;
+      padding: 10px;
+      font-size: 13px;
+      text-align: center;
+    }
   </style>
 </head>
 
 <body>
 
 <!-- LIBRARY -->
-<div class="header">Kanye Unreleased</div>
 <div id="library" class="library"></div>
 
 <!-- PLAYER -->
@@ -101,7 +104,17 @@
 
 </div>
 
+<div class="nowPlaying" id="nowPlaying">Nothing playing</div>
+
 <script>
+
+const audio = document.getElementById("audio");
+const library = document.getElementById("library");
+const player = document.getElementById("player");
+const nowPlaying = document.getElementById("nowPlaying");
+
+let currentAlbum = null;
+let currentIndex = 0;
 
 // --------------------
 // YOUR ALBUMS
@@ -111,32 +124,20 @@ const albums = [
     name: "Good Ass Job",
     cover: "goodasscover.jpg",
     songs: [
-      { file: "seemenow.mp3", title: "See Me Now", artist: "Kanye West (feat. Beyoncé, Charlie Wilson, Big Sean)" },
-      { file: "dontlookdown.mp3", title: "Don't Look Down", artist: "Kanye West (feat. Mos Def, Lupe Fiasco, Big Sean)" },
-      { file: "throwmoneyeverywhere.mp3", title: "Throw Money Everywhere", artist: "Kanye West" },
-      { file: "mamasboyfriends.mp3", title: "Mama's Boyfriends", artist: "Kanye West" },
+      { file: "seemenow.mp3", title: "See Me Now", artist: "Kanye West (feat. Beyoncé, Charlie Wilson, and Big Sean)" },
+      { file: "mamasboyfriends.mp3", title: "Mamas Boyfriends", artist: "Kanye West" },
     ]
   },
 
   {
-    name: "Second Album",
-    cover: "cover2.jpg",
+    name: "CUCK",
+    cover: "cuckcover.jpg",
     songs: [
-      { file: "song5.mp3", title: "Song A", artist: "Artist A" },
-      { file: "song6.mp3", title: "Song B", artist: "Artist B" }
+      { file: "ww3.mp3", title: "WW3", artist: "Kanye West" },
+      { file: "nitrous.mp3", title: "NITROUS", artist: "Kanye West" }
     ]
   }
 ];
-
-// --------------------
-// VARIABLES
-// --------------------
-let currentAlbum = null;
-let currentSong = 0;
-
-const library = document.getElementById("library");
-const player = document.getElementById("player");
-const audio = document.getElementById("audio");
 
 // --------------------
 // BUILD LIBRARY
@@ -155,7 +156,7 @@ albums.forEach((album, i) => {
 });
 
 // --------------------
-// OPEN ALBUM
+// OPEN ALBUM (NO AUTO PLAY)
 // --------------------
 function openAlbum(i) {
   currentAlbum = albums[i];
@@ -163,37 +164,12 @@ function openAlbum(i) {
   library.style.display = "none";
   player.style.display = "block";
 
-  loadAlbumIntoPlayer(currentAlbum);
+  document.getElementById("albumTitle").innerText = currentAlbum.name;
+  document.getElementById("cover").src = currentAlbum.cover;
+
+  buildSongs();
 }
-  function loadAlbumIntoPlayer(album) {
-  document.getElementById("albumTitle").innerText = album.name;
-  document.getElementById("cover").src = album.cover;
 
-  buildSongs(album.songs);
-}
-  function buildSongs(songs) {
-  const songsDiv = document.getElementById("songs");
-  songsDiv.innerHTML = "";
-
-  songs.forEach((song, i) => {
-    const div = document.createElement("div");
-    div.className = "song";
-    div.innerText = song.title;
-
-    div.onclick = () => playSong(song, songs);
-    songsDiv.appendChild(div);
-  });
-}
-  function playSong(song, playlist) {
-  currentPlaylist = playlist;
-  currentIndex = playlist.indexOf(song);
-
-  audio.src = song.file;
-  document.getElementById("title").innerText = song.title;
-  document.getElementById("artist").innerText = song.artist;
-
-  audio.play();
-}
 // --------------------
 // BUILD SONG LIST
 // --------------------
@@ -215,7 +191,7 @@ function buildSongs() {
 // PLAY SONG
 // --------------------
 function playSong(i) {
-  currentSong = i;
+  currentIndex = i;
 
   const song = currentAlbum.songs[i];
 
@@ -225,11 +201,13 @@ function playSong(i) {
 
   audio.play();
 
+  nowPlaying.innerText = `Now Playing: ${song.title} — ${song.artist}`;
+
   highlight(i);
 }
 
 // --------------------
-// HIGHLIGHT CURRENT SONG
+// HIGHLIGHT SONG
 // --------------------
 function highlight(i) {
   const songs = document.querySelectorAll(".song");
@@ -238,12 +216,23 @@ function highlight(i) {
 }
 
 // --------------------
-// BACK BUTTON
+// NEXT SONG (AUTO)
+// --------------------
+audio.addEventListener("ended", () => {
+  if (!currentAlbum) return;
+
+  currentIndex = (currentIndex + 1) % currentAlbum.songs.length;
+  playSong(currentIndex);
+});
+
+// --------------------
+// BACK TO LIBRARY
 // --------------------
 function goBack() {
   player.style.display = "none";
   library.style.display = "grid";
   audio.pause();
+  nowPlaying.innerText = "Nothing playing";
 }
 
 </script>
