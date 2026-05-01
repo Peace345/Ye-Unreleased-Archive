@@ -163,13 +163,37 @@ function openAlbum(i) {
   library.style.display = "none";
   player.style.display = "block";
 
-  document.getElementById("albumTitle").innerText = currentAlbum.name;
-  document.getElementById("cover").src = currentAlbum.cover;
-
-  buildSongs();
-  playSong(0);
+  loadAlbumIntoPlayer(currentAlbum);
 }
+  function loadAlbumIntoPlayer(album) {
+  document.getElementById("albumTitle").innerText = album.name;
+  document.getElementById("cover").src = album.cover;
 
+  buildSongs(album.songs);
+}
+  function buildSongs(songs) {
+  const songsDiv = document.getElementById("songs");
+  songsDiv.innerHTML = "";
+
+  songs.forEach((song, i) => {
+    const div = document.createElement("div");
+    div.className = "song";
+    div.innerText = song.title;
+
+    div.onclick = () => playSong(song, songs);
+    songsDiv.appendChild(div);
+  });
+}
+  function playSong(song, playlist) {
+  currentPlaylist = playlist;
+  currentIndex = playlist.indexOf(song);
+
+  audio.src = song.file;
+  document.getElementById("title").innerText = song.title;
+  document.getElementById("artist").innerText = song.artist;
+
+  audio.play();
+}
 // --------------------
 // BUILD SONG LIST
 // --------------------
