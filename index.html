@@ -91,6 +91,7 @@
 <div id="player" class="player">
 
   <button onclick="goBack()">← Back</button>
+  <button onclick="shufflePlay()">🔀 Shuffle</button>
 
   <h2 id="albumTitle"></h2>
   <img id="cover" class="cover">
@@ -120,6 +121,15 @@ let currentIndex = 0;
 // YOUR ALBUMS
 // --------------------
 const albums = [
+  {
+    name: "Freshman Adjustment",
+    cover: "freshmanadjustmentcover.jpg",
+    songs: [
+      { file: "apologize.mp3", title: "Apologize", artist: "Kanye West" },
+      { file: "thegossipfiles.mp3", title: "The Gossip Files", artist: "Kanye West" }
+    ]
+  },
+  
   {
     name: "Graduation",
     cover: "graduationcover.jpg",
@@ -324,6 +334,46 @@ function goBack() {
     currentIndex = (currentIndex + 1) % currentAlbum.songs.length;
     playSong(currentIndex);
   });
+}
+
+  function getAllSongs() {
+  let allSongs = [];
+
+  albums.forEach(album => {
+    album.songs.forEach(song => {
+      allSongs.push({
+        ...song,
+        albumName: album.name
+      });
+    });
+  });
+
+  return allSongs;
+}
+
+function shufflePlay() {
+  const allSongs = getAllSongs();
+
+  const randomIndex = Math.floor(Math.random() * allSongs.length);
+  const song = allSongs[randomIndex];
+
+  // find album that song belongs to
+  currentAlbum = albums.find(a => a.name === song.albumName);
+  currentIndex = currentAlbum.songs.findIndex(s => s.file === song.file);
+
+  // play song
+  audio.src = song.file;
+
+  document.getElementById("title").innerText = song.title;
+  document.getElementById("artist").innerText = song.artist;
+
+  nowPlaying.innerText = `Now Playing (Shuffle): ${song.title} — ${song.artist}`;
+
+  audio.play();
+
+  highlight(currentIndex);
+
+  updateMediaSession(song);
 }
 
 </script>
