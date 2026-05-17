@@ -20,6 +20,13 @@
       padding: 20px;
     }
 
+    .library-stats {
+      text-align: center;
+      opacity: 0.6;
+      padding: 20px;
+      font-size: 14px;
+    }
+
     .album {
       cursor: pointer;
     }
@@ -87,6 +94,8 @@
 
 <!-- LIBRARY -->
 <div id="library" class="library"></div>
+
+<div id="libraryStats" class="library-stats"></div>
 
 <!-- PLAYER -->
 <div id="player" class="player">
@@ -334,7 +343,9 @@ const albums = [
       { file: "welcometoucla.mp3", title: "Welcome To UCLA", artist: "Kanye West" },
       { file: "cantlookintomyeyes.mp3", title: "Can't Look Into My Eyes", artist: "Kanye West (feat. Kid Cudi)" },
       { file: "tongues.mp3", title: "Tongues", artist: "Kanye West" },
+      { file: "alleyesonye.mp3", title: "All Eyes On Ye", artist: "Kanye West" },
       { file: "richniggadrunk.mp3", title: "Rich Nigga Drunk", artist: "Kanye West (feat. Tyga)" },
+      { file: "timmyturnerremix.mp3", title: "Timmy Turner (Remix)", artist: "Kanye West (feat. Desiigner" },
       { file: "canubeturbografx16version.mp3", title: "Can U Be", artist: "Kanye West (feat. Travis Scott)" }
     ]
   },
@@ -410,9 +421,11 @@ const albums = [
     name: "Jesus Is King II",
     cover: "jesusiskingiicover.jpg",
     songs: [
+      { file: "dontgiveup.mp3", title: "Don't Give Up", artist: "Kanye West (feat. CyHi the Prynce)" },
       { file: "thisistheglory.mp3", title: "This Is The Glory", artist: "Kanye West (feat. Snoop Dogg)" },
       { file: "wakethedead.mp3", title: "Wake The Dead", artist: "Kanye West" },
-      { file: "findaway.mp3", title: "Find A Way", artist: "Kanye West" }
+      { file: "findaway.mp3", title: "Find A Way", artist: "Kanye West" },
+      { file: "bound3thisistheday.mp3", title: "Bound 3/This Is The Day", artist: "Kanye West (feat. Consequence)" }
     ]
   },
 
@@ -437,6 +450,8 @@ const albums = [
     songs: [
       { file: "precious.mp3", title: "Precious", artist: "Kanye West (feat. Dem Jointz)" },
       { file: "bloodofthelamb.mp3", title: "Blood Of The Lambs", artist: "Kanye West (feat. Pusha T)" },
+      { file: "feelaway.mp3", title: "Feel A Way", artist: "Kanye West" },
+      { file: "whathasamericadoneforme.mp3", title: "What Has America Done For Me", artist: "Kanye West (feat. Consequence)" },
       { file: "duranduran.mp3", title: "Duran Duran", artist: "Kanye West" },
       { file: "godgotme.mp3", title: "God Got Me", artist: "Kanye West" },
       { file: "futuresounds.mp3", title: "Future Sounds", artist: "Kanye West (feat. Travis Scott, Victory Boyd)" },
@@ -453,6 +468,8 @@ const albums = [
     songs: [
       { file: "letthespiritgowild.mp3", title: "Let The Spirit Go Wild", artist: "Kanye West (feat. Nikki Grier, SSC, Ant Clemons)" },
       { file: "runitup.mp3", title: "Run It Up", artist: "Kanye West (feat. Dem Jointz)" },
+      { file: "9.10.mp3", title: "9.10", artist: "Kanye West" },
+      { file: "bart.mp3", title: "Bart", artist: "Kanye West" },
       { file: "prayandleaveitthere.mp3", title: "Pray And Leave It There", artist: "Kanye West (feat. Nikki Grier)" },
       { file: "hybrid.mp3", title: "Hybrid", artist: "Kanye West (feat. Dem Jointz)" },
       { file: "petals.mp3", title: "Petals", artist: "Kanye West" }
@@ -480,7 +497,8 @@ const albums = [
       { file: "pray.mp3", title: "Pray", artist: "Kanye West" },
       { file: "sosoon.mp3", title: "So Soon", artist: "Kanye West (feat. Ty Dolla $ign)" },
       { file: "lovelovelove.mp3", title: "Love Love Love", artist: "Kanye West" },
-      { file: "wheretheyat.mp3", title: "Where They At", artist: "Kanye West (feat. Westside Gunn, French Montana)" }
+      { file: "wheretheyat.mp3", title: "Where They At", artist: "Kanye West (feat. Westside Gunn, French Montana)" },
+      { file: "pridewin.mp3", title: "Pride Win", artist: "Kanye West" }
     ]
   },
 
@@ -532,6 +550,7 @@ const albums = [
     songs: [
       { file: "ww3.mp3", title: "WW3", artist: "Kanye West" },
       { file: "cosby.mp3", title: "COSBY", artist: "Kanye West" },
+      { file: "diddyfree.mp3", title: "DIDDY FREE", artist: "Kanye West" },
       { file: "bianca.mp3", title: "BIANCA", artist: "Kanye West" },
       { file: "hh.mp3", title: "HEIL HITLER", artist: "Kanye West" },
       { file: "gaschambers.mp3", title: "GAS CHAMBERS", artist: "Kanye West" },
@@ -752,6 +771,19 @@ function forward10() {
   audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
 }
 
+function updateLibraryStats() {
+  let totalSongs = 0;
+
+  albums.forEach(album => {
+    totalSongs += album.songs.length;
+  });
+
+  document.getElementById("libraryStats").innerText =
+    `${albums.length} Albums • ${totalSongs} Songs`;
+}
+
+updateLibraryStats();
+  
 </script>
 
 </body>
