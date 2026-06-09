@@ -122,6 +122,8 @@
 
 <script>
 
+let shuffleMode = false;
+  
 const audio = document.getElementById("audio");
 const library = document.getElementById("library");
 const player = document.getElementById("player");
@@ -742,21 +744,14 @@ function shufflePlay() {
   const randomIndex = Math.floor(Math.random() * allSongs.length);
   const song = allSongs[randomIndex];
 
-  // find album that song belongs to
   currentAlbum = albums.find(a => a.name === song.albumName);
   currentIndex = currentAlbum.songs.findIndex(s => s.file === song.file);
 
-  // play song
   audio.src = song.file;
-
   document.getElementById("title").innerText = song.title;
   document.getElementById("artist").innerText = song.artist;
 
-  nowPlaying.innerText = `Now Playing (Shuffle): ${song.title} — ${song.artist}`;
-
   audio.play();
-
-  highlight(currentIndex);
 
   updateMediaSession(song);
 }
