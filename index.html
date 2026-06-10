@@ -652,6 +652,8 @@ const albums = [
 // --------------------
 // BUILD 
 // --------------------
+const library = document.getElementById("library");
+
 albums.forEach((album, i) => {
   const div = document.createElement("div");
   div.className = "album";
@@ -665,7 +667,6 @@ albums.forEach((album, i) => {
 
   library.appendChild(div);
 });
-
 // --------------------
 // OPEN ALBUM (NO AUTO PLAY)
 // --------------------
