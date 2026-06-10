@@ -12,10 +12,10 @@
       font-family: Arial;
     }
 
-    <input
+ <input
   type="text"
   id="searchBar"
-  placeholder="🔍 Search songs..."
+  placeholder="🔍 Search songs or artists..."
   oninput="searchSongs()"
 />
 
@@ -702,24 +702,18 @@ function buildSongs() {
 // --------------------
 // PLAY SONG
 // --------------------
-function playSong(i) {
-  currentIndex = i;
+function playSearchResult(index) {
+  const song = window.searchMatches[index];
+  if (!song) return;
 
-  const song = currentAlbum.songs[i];
+  currentAlbum = song.albumRef;
 
-  audio.src = song.file;
-  document.getElementById("title").innerText = song.title;
-  document.getElementById("artist").innerText = song.artist;
+  currentIndex = currentAlbum.songs.findIndex(
+    s => s.file === song.file
+  );
 
-  audio.play();
-
-  nowPlaying.innerText = `Now Playing: ${song.title} — ${song.artist}`;
-
-  highlight(i);
-
-  updateMediaSession(song);
+  playSong(currentIndex);
 }
-
 // --------------------
 // HIGHLIGHT SONG
 // --------------------
@@ -856,49 +850,46 @@ function updateLibraryStats() {
 updateLibraryStats();
 
 function searchSongs() {
-  const query = document
-    .getElementById("searchBar")
-    .value
-    .toLowerCase();
-
+  const input = document.getElementById("searchBar");
   const resultsDiv = document.getElementById("searchResults");
 
-  if (!query) {
+  if (!input || !resultsDiv) return;
+
+  const query = input.value.trim().toLowerCase();
+
+  if (query === "") {
     resultsDiv.innerHTML = "";
     return;
   }
 
-  const allSongs = getAllSongs();
+  const allSongs = [];
 
-  const matches = allSongs.filter(song =>
-    song.title.toLowerCase().includes(query) ||
-    song.artist.toLowerCase().includes(query)
-  );
+  albums.forEach(album => {
+    album.songs.forEach(song => {
+      allSongs.push({
+        ...song,
+        albumName: album.name,
+        albumRef: album
+      });
+    });
+  });
 
-  resultsDiv.innerHTML = matches
-    .map((song, index) => `
-      <div class="search-result" onclick="playSearchResult(${index})">
-        <strong>${song.title}</strong><br>
-        ${song.artist}
-      </div>
-    `)
-    .join("");
+  const matches = allSongs.filter(song => {
+    return (
+      song.title.toLowerCase().includes(query) ||
+      song.artist.toLowerCase().includes(query) ||
+      song.albumName.toLowerCase().includes(query)
+    );
+  });
+
+  resultsDiv.innerHTML = matches.map((song, i) => `
+    <div class="search-result" onclick="playSearchResult(${i})">
+      <strong>${song.title}</strong><br>
+      ${song.artist} — <em>${song.albumName}</em>
+    </div>
+  `).join("");
 
   window.searchMatches = matches;
-}
-
-function playSearchResult(index) {
-  const song = window.searchMatches[index];
-
-  currentAlbum = albums.find(
-    a => a.name === song.albumName
-  );
-
-  currentIndex = currentAlbum.songs.findIndex(
-    s => s.file === song.file
-  );
-
-  playSong(currentIndex);
 }
   
 </script>
