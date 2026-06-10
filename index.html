@@ -661,8 +661,9 @@ albums.forEach((album, i) => {
     <div class="album-title">${album.name}</div>
   `;
 
-div.onclick = () => openAlbum(i);
-container.appendChild(div);
+  div.onclick = () => openAlbum(i);
+
+  library.appendChild(div);
 });
 
 // --------------------
