@@ -649,14 +649,6 @@ function openAlbum(i) {
   document.getElementById("cover").src = currentAlbum.cover;
 
   buildSongs();
-
-  const songsDiv = document.getElementById("songs");
-  if (songsDiv) {
-    songsDiv.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }
 }
 // --------------------
 // BUILD SONG LIST
