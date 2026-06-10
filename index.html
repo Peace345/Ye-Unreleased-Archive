@@ -650,12 +650,14 @@ function openAlbum(i) {
 
   buildSongs();
 
-  document.getElementById("songs").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
+  const songsDiv = document.getElementById("songs");
+  if (songsDiv) {
+    songsDiv.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
 }
-
 // --------------------
 // BUILD SONG LIST
 // --------------------
