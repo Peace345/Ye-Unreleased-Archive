@@ -24,30 +24,21 @@
     /* LIBRARY */
     .library {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .library-stats {
-      text-align: center;
-      opacity: 0.6;
-      padding: 20px;
-      font-size: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      padding: 10px;
     }
 
     .album {
       cursor: pointer;
+      text-align: center;
     }
 
     .album img {
       width: 100%;
-      border-radius: 12px;
-    }
-
-    .album-title {
-      margin-top: 6px;
-      font-size: 14px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
     }
 
     /* PLAYER */
@@ -655,25 +646,21 @@ const albums = [
 // --------------------
 // BUILD 
 // --------------------
-window.addEventListener("DOMContentLoaded", () => {
+  function buildSongs() {
+  const songsDiv = document.getElementById("songs");
+  songsDiv.innerHTML = "";
 
-  const library = document.getElementById("library");
+  if (!currentAlbum || !currentAlbum.songs) return;
 
-  albums.forEach((album, i) => {
+  currentAlbum.songs.forEach((song, i) => {
     const div = document.createElement("div");
-    div.className = "album";
+    div.className = "song";
+    div.innerText = song.title;
 
-    div.innerHTML = `
-      <img src="${album.cover}">
-      <div class="album-title">${album.name}</div>
-    `;
-
-    div.onclick = () => openAlbum(i);
-
-    library.appendChild(div);
+    div.onclick = () => playSong(i);
+    songsDiv.appendChild(div);
   });
-
-});
+}
 // --------------------
 // OPEN ALBUM (NO AUTO PLAY)
 // --------------------
