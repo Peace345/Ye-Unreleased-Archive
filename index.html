@@ -643,7 +643,9 @@ const albums = [
 // --------------------
 function openAlbum(i) {
   currentAlbum = albums[i];
-  currentIndex = 0;
+
+  library.style.display = "none";
+  player.style.display = "block";
 
   document.getElementById("albumTitle").innerText = currentAlbum.name;
   document.getElementById("cover").src = currentAlbum.cover;
