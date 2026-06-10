@@ -648,11 +648,12 @@ const albums = [
 // --------------------
 // BUILD 
 // --------------------
-  function buildSongs() {
+ function buildSongs() {
   const songsDiv = document.getElementById("songs");
-  songsDiv.innerHTML = "";
 
-  if (!currentAlbum || !currentAlbum.songs) return;
+  if (!songsDiv || !currentAlbum) return;
+
+  songsDiv.innerHTML = "";
 
   currentAlbum.songs.forEach((song, i) => {
     const div = document.createElement("div");
@@ -660,6 +661,7 @@ const albums = [
     div.innerText = song.title;
 
     div.onclick = () => playSong(i);
+
     songsDiv.appendChild(div);
   });
 }
@@ -668,19 +670,15 @@ const albums = [
 // --------------------
 function openAlbum(i) {
   currentAlbum = albums[i];
+  currentIndex = 0;
 
-  document.getElementById("libraryView").style.display = "none";
-  document.getElementById("albumView").style.display = "block";
+  library.style.display = "none";
+  player.style.display = "block";
 
   document.getElementById("albumTitle").innerText = currentAlbum.name;
   document.getElementById("cover").src = currentAlbum.cover;
 
   buildSongs();
-}
-
-  function backToLibrary() {
-  document.getElementById("libraryView").style.display = "block";
-  document.getElementById("albumView").style.display = "none";
 }
 
 // --------------------
@@ -844,21 +842,19 @@ function updateLibraryStats() {
     totalSongs += album.songs.length;
   });
 
-  document.getElementById("libraryStats").innerText =
-    `${albums.length} Albums • ${totalSongs} Songs`;
+  const stats = document.getElementById("libraryStats");
+  if (!stats) return;
+
+  stats.innerText = `${albums.length} Albums • ${totalSongs} Songs`;
 }
 
 updateLibraryStats();
 
 function searchSongs() {
-  const input = document.getElementById("searchBar");
+  const query = document.getElementById("searchBar").value.toLowerCase();
   const resultsDiv = document.getElementById("searchResults");
 
-  if (!input || !resultsDiv) return;
-
-  const query = input.value.trim().toLowerCase();
-
-  if (query === "") {
+  if (!query) {
     resultsDiv.innerHTML = "";
     return;
   }
@@ -875,18 +871,15 @@ function searchSongs() {
     });
   });
 
-  const matches = allSongs.filter(song => {
-    return (
-      song.title.toLowerCase().includes(query) ||
-      song.artist.toLowerCase().includes(query) ||
-      song.albumName.toLowerCase().includes(query)
-    );
-  });
+  const matches = allSongs.filter(song =>
+    song.title.toLowerCase().includes(query) ||
+    song.artist.toLowerCase().includes(query)
+  );
 
   resultsDiv.innerHTML = matches.map((song, i) => `
     <div class="search-result" onclick="playSearchResult(${i})">
       <strong>${song.title}</strong><br>
-      ${song.artist} — <em>${song.albumName}</em>
+      ${song.artist}
     </div>
   `).join("");
 
@@ -894,6 +887,30 @@ function searchSongs() {
 }
 
 function buildAlbums() {
+  const library = document.getElementById("library");
+
+  if (!library) return;
+
+  library.innerHTML = "";
+
+  albums.forEach((album, i) => {
+    const div = document.createElement("div");
+    div.className = "album";
+
+    div.innerHTML = `
+      <img src="${album.cover}">
+      <div class="album-title">${album.name}</div>
+    `;
+
+    div.onclick = () => openAlbum(i);
+
+    library.appendChild(div);
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  buildAlbums();
+});
   
 </script>
 
