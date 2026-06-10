@@ -12,15 +12,6 @@
       font-family: Arial;
     }
 
- <input
-  type="text"
-  id="searchBar"
-  placeholder="🔍 Search songs or artists..."
-  oninput="searchSongs()"
-/>
-
-<div id="searchResults"></div>
-
     /* LIBRARY */
    #library {
   display: grid !important;
@@ -91,27 +82,6 @@
       text-align: center;
     }
 
-   #searchBar {
-      width: 90%;
-      max-width: 500px;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 10px;
-      margin: 20px auto;
-      display: block;
-    }
-
-  #searchResults {
-      width: 90%;
-      max-width: 600px;
-      margin: 0 auto;
-  }
-
-  .search-result {
-      padding: 10px;
-      margin: 5px 0;
-      cursor: pointer;
-      border-radius: 8px;
   }
   </style>
 </head>
@@ -704,17 +674,19 @@ function buildSongs() {
 // --------------------
 // PLAY SONG
 // --------------------
-function playSearchResult(index) {
-  const song = window.searchMatches[index];
+ function playSong(index) {
+  const song = currentAlbum.songs[index];
+
   if (!song) return;
 
-  currentAlbum = song.albumRef;
+  audio.src = song.file;
 
-  currentIndex = currentAlbum.songs.findIndex(
-    s => s.file === song.file
-  );
+  document.getElementById("title").innerText = song.title;
+  document.getElementById("artist").innerText = song.artist;
 
-  playSong(currentIndex);
+  audio.play();
+
+  updateMediaSession(song);
 }
 // --------------------
 // HIGHLIGHT SONG
@@ -853,42 +825,6 @@ function updateLibraryStats() {
 
 updateLibraryStats();
 
-function searchSongs() {
-  const query = document.getElementById("searchBar").value.toLowerCase();
-  const resultsDiv = document.getElementById("searchResults");
-
-  if (!query) {
-    resultsDiv.innerHTML = "";
-    return;
-  }
-
-  const allSongs = [];
-
-  albums.forEach(album => {
-    album.songs.forEach(song => {
-      allSongs.push({
-        ...song,
-        albumName: album.name,
-        albumRef: album
-      });
-    });
-  });
-
-  const matches = allSongs.filter(song =>
-    song.title.toLowerCase().includes(query) ||
-    song.artist.toLowerCase().includes(query)
-  );
-
-  resultsDiv.innerHTML = matches.map((song, i) => `
-    <div class="search-result" onclick="playSearchResult(${i})">
-      <strong>${song.title}</strong><br>
-      ${song.artist}
-    </div>
-  `).join("");
-
-  window.searchMatches = matches;
-}
-
 function buildAlbums() {
   const library = document.getElementById("library");
 
@@ -914,21 +850,6 @@ function buildAlbums() {
 window.addEventListener("DOMContentLoaded", () => {
   buildAlbums();
 });
-
-  function playSong(index) {
-  const song = currentAlbum.songs[index];
-
-  if (!song) return;
-
-  audio.src = song.file;
-
-  document.getElementById("title").innerText = song.title;
-  document.getElementById("artist").innerText = song.artist;
-
-  audio.play();
-
-  updateMediaSession(song);
-}
   
 </script>
 
