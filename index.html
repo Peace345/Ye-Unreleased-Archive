@@ -12,6 +12,15 @@
       font-family: Arial;
     }
 
+    <input
+  type="text"
+  id="searchBar"
+  placeholder="🔍 Search songs..."
+  oninput="searchSongs()"
+/>
+
+<div id="searchResults"></div>
+
     /* LIBRARY */
     .library {
       display: grid;
@@ -87,15 +96,38 @@
       font-size: 13px;
       text-align: center;
     }
+
+   #searchBar {
+      width: 90%;
+      max-width: 500px;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      margin: 20px auto;
+      display: block;
+    }
+
+  #searchResults {
+      width: 90%;
+      max-width: 600px;
+      margin: 0 auto;
+  }
+
+  .search-result {
+      padding: 10px;
+      margin: 5px 0;
+      cursor: pointer;
+      border-radius: 8px;
+  }
   </style>
 </head>
 
 <body>
 
-<!-- LIBRARY -->
-<div id="library" class="library"></div>
+<!--  -->
+<div id="" class=""></div>
 
-<div id="libraryStats" class="library-stats"></div>
+<div id="Stats" class="-stats"></div>
 
 <!-- PLAYER -->
 <div id="player" class="player">
@@ -125,7 +157,7 @@
 let Mode = false;
   
 const audio = document.getElementById("audio");
-const library = document.getElementById("library");
+const  = document.getElementById("");
 const player = document.getElementById("player");
 const nowPlaying = document.getElementById("nowPlaying");
 
@@ -615,7 +647,7 @@ const albums = [
 ];
 
 // --------------------
-// BUILD LIBRARY
+// BUILD 
 // --------------------
 albums.forEach((album, i) => {
   const div = document.createElement("div");
@@ -627,7 +659,7 @@ albums.forEach((album, i) => {
   `;
 
   div.onclick = () => openAlbum(i);
-  library.appendChild(div);
+  .appendChild(div);
 });
 
 // --------------------
@@ -817,6 +849,52 @@ function updateLibraryStats() {
 }
 
 updateLibraryStats();
+
+function searchSongs() {
+  const query = document
+    .getElementById("searchBar")
+    .value
+    .toLowerCase();
+
+  const resultsDiv = document.getElementById("searchResults");
+
+  if (!query) {
+    resultsDiv.innerHTML = "";
+    return;
+  }
+
+  const allSongs = getAllSongs();
+
+  const matches = allSongs.filter(song =>
+    song.title.toLowerCase().includes(query) ||
+    song.artist.toLowerCase().includes(query)
+  );
+
+  resultsDiv.innerHTML = matches
+    .map((song, index) => `
+      <div class="search-result" onclick="playSearchResult(${index})">
+        <strong>${song.title}</strong><br>
+        ${song.artist}
+      </div>
+    `)
+    .join("");
+
+  window.searchMatches = matches;
+}
+
+function playSearchResult(index) {
+  const song = window.searchMatches[index];
+
+  currentAlbum = albums.find(
+    a => a.name === song.albumName
+  );
+
+  currentIndex = currentAlbum.songs.findIndex(
+    s => s.file === song.file
+  );
+
+  playSong(currentIndex);
+}
   
 </script>
 
