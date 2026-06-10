@@ -101,7 +101,7 @@
 <div id="player" class="player">
 
   <button onclick="goBack()">← Back</button>
-  <button onclick="shufflePlay()">🔀 Shuffle</button>
+  <button onclick="toggleShuffle()">🔀 Shuffle</button>
   <button onclick="togglePlay()">▶️ / ⏸</button>
   <button onclick="back10()">⏪ 10s</button>
   <button onclick="forward10()">⏩ 10s</button>
@@ -122,15 +122,16 @@
 
 <script>
 
-let shuffleMode = false;
+let Mode = false;
   
 const audio = document.getElementById("audio");
 const library = document.getElementById("library");
 const player = document.getElementById("player");
 const nowPlaying = document.getElementById("nowPlaying");
 
-let currentAlbum = null;
+let currentAlbum;
 let currentIndex = 0;
+let shuffleMode = false;
 
 // --------------------
 // YOUR ALBUMS
@@ -695,11 +696,23 @@ function highlight(i) {
 // NEXT SONG (AUTO)
 // --------------------
 audio.addEventListener("ended", () => {
-  if (!currentAlbum) return;
+  if (shuffleMode) {
+    shufflePlay();
+  } else {
+    if (!currentAlbum) return;
 
-  currentIndex = (currentIndex + 1) % currentAlbum.songs.length;
-  playSong(currentIndex);
+    currentIndex = (currentIndex + 1) % currentAlbum.songs.length;
+    playSong(currentIndex);
+  }
 });
+
+  function toggleShuffle() {
+  shuffleMode = !shuffleMode;
+
+  if (shuffleMode) {
+    shufflePlay();
+  }
+}
 
 // --------------------
 // BACK TO LIBRARY
