@@ -12,28 +12,43 @@
       font-family: Arial;
     }
 
+    <input
+  type="text"
+  id="searchBar"
+  placeholder="🔍 Search songs..."
+  oninput="searchSongs()"
+/>
+
+<div id="searchResults"></div>
+
     /* LIBRARY */
-   #library {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
-  gap: 16px !important;
-  padding: 12px;
-}
+    .library {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
 
-.album {
-  width: 100%;
-  max-width: 180px;
-  cursor: pointer;
-  text-align: center;
-}
+    .library-stats {
+      text-align: center;
+      opacity: 0.6;
+      padding: 20px;
+      font-size: 14px;
+    }
 
-.album img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 12px;
-  display: block;
-}
+    .album {
+      cursor: pointer;
+    }
+
+    .album img {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .album-title {
+      margin-top: 6px;
+      font-size: 14px;
+    }
 
     /* PLAYER */
     .player {
@@ -82,6 +97,27 @@
       text-align: center;
     }
 
+   #searchBar {
+      width: 90%;
+      max-width: 500px;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      margin: 20px auto;
+      display: block;
+    }
+
+  #searchResults {
+      width: 90%;
+      max-width: 600px;
+      margin: 0 auto;
+  }
+
+  .search-result {
+      padding: 10px;
+      margin: 5px 0;
+      cursor: pointer;
+      border-radius: 8px;
   }
   </style>
 </head>
@@ -89,10 +125,6 @@
 <body>
 
 <!--  -->
-<div id="library"></div>
-
-<div id="libraryStats"></div>
-  
 <div id="" class=""></div>
 
 <div id="Stats" class="-stats"></div>
@@ -125,6 +157,7 @@
 let Mode = false;
 
 const audio = document.getElementById("audio");
+const = document.getElementById("");
 const player = document.getElementById("player");
 const nowPlaying = document.getElementById("nowPlaying");
 
@@ -132,7 +165,6 @@ let currentAlbum;
 let currentIndex = 0;
 let shuffleMode = false;
 
-const library = document.getElementById("library");
 // --------------------
 // YOUR ALBUMS
 // --------------------
@@ -345,7 +377,7 @@ const albums = [
       { file: "themall.mp3", title: "The Mall", artist: "Kanye West, Post Malone" },
       { file: "fatherstretch.mp3", title: "Father Stretch", artist: "Kanye West, Kendrick Lamar" },
       { file: "ifeellikethat.mp3", title: "I Feel Like That", artist: "Kanye West, Ty Dolla $ign" },
-      { file: "https://rising-chocolate-rat1eeft.edgeone.app/30hoursdemo.mp3", title: "30 Hours", artist: "Kanye West" },
+      { file: "30hoursdemo.mp3", title: "30 Hours", artist: "Kanye West" },
       { file: "ultralightbeamog.mp3", title: "Ultralight Beam", artist: "Kanye West, Chance the Rapper" }
     ]
   },
@@ -621,23 +653,19 @@ const albums = [
 // --------------------
 // BUILD 
 // --------------------
- function buildSongs() {
-  const songsDiv = document.getElementById("songs");
+albums.forEach((album, i) => {
+  const div = document.createElement("div");
+  div.className = "album";
 
-  if (!songsDiv || !currentAlbum) return;
+  div.innerHTML = `
+    <img src="${album.cover}">
+    <div class="album-title">${album.name}</div>
+  `;
 
-  songsDiv.innerHTML = "";
+  div.onclick = () => openAlbum(i);
+  .appendChild(div);
+});
 
-  currentAlbum.songs.forEach((song, i) => {
-    const div = document.createElement("div");
-    div.className = "song";
-    div.innerText = song.title;
-
-    div.onclick = () => playSong(i);
-
-    songsDiv.appendChild(div);
-  });
-}
 // --------------------
 // OPEN ALBUM (NO AUTO PLAY)
 // --------------------
@@ -652,6 +680,7 @@ function openAlbum(i) {
 
   buildSongs();
 }
+
 // --------------------
 // BUILD SONG LIST
 // --------------------
@@ -672,20 +701,24 @@ function buildSongs() {
 // --------------------
 // PLAY SONG
 // --------------------
- function playSong(index) {
-  const song = currentAlbum.songs[index];
+function playSong(i) {
+  currentIndex = i;
 
-  if (!song) return;
+  const song = currentAlbum.songs[i];
 
   audio.src = song.file;
-
   document.getElementById("title").innerText = song.title;
   document.getElementById("artist").innerText = song.artist;
 
   audio.play();
 
+  nowPlaying.innerText = `Now Playing: ${song.title} — ${song.artist}`;
+
+  highlight(i);
+
   updateMediaSession(song);
 }
+
 // --------------------
 // HIGHLIGHT SONG
 // --------------------
@@ -815,40 +848,58 @@ function updateLibraryStats() {
     totalSongs += album.songs.length;
   });
 
-  const stats = document.getElementById("libraryStats");
-  if (!stats) return;
-
-  stats.innerText = `${albums.length} Albums • ${totalSongs} Songs`;
+  document.getElementById("libraryStats").innerText =
+    `${albums.length} Albums • ${totalSongs} Songs`;
 }
 
 updateLibraryStats();
 
-function buildAlbums() {
-  const library = document.getElementById("library");
+function searchSongs() {
+  const query = document
+    .getElementById("searchBar")
+    .value
+    .toLowerCase();
 
-  if (!library) return;
+  const resultsDiv = document.getElementById("searchResults");
 
-  library.innerHTML = "";
+  if (!query) {
+    resultsDiv.innerHTML = "";
+    return;
+  }
 
-  albums.forEach((album, i) => {
-    const div = document.createElement("div");
-    div.className = "album";
+  const allSongs = getAllSongs();
 
-    div.innerHTML = `
-      <img src="${album.cover}">
-      <div class="album-title">${album.name}</div>
-    `;
+  const matches = allSongs.filter(song =>
+    song.title.toLowerCase().includes(query) ||
+    song.artist.toLowerCase().includes(query)
+  );
 
-    div.onclick = () => openAlbum(i);
+  resultsDiv.innerHTML = matches
+    .map((song, index) => `
+      <div class="search-result" onclick="playSearchResult(${index})">
+        <strong>${song.title}</strong><br>
+        ${song.artist}
+      </div>
+    `)
+    .join("");
 
-    library.appendChild(div);
-  });
+  window.searchMatches = matches;
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  buildAlbums();
-});
-  
+function playSearchResult(index) {
+  const song = window.searchMatches[index];
+
+  currentAlbum = albums.find(
+    a => a.name === song.albumName
+  );
+
+  currentIndex = currentAlbum.songs.findIndex(
+    s => s.file === song.file
+  );
+
+  playSong(currentIndex);
+}
+
 </script>
 
 </body>
