@@ -615,6 +615,24 @@ const albums = [
       { file: "redeye.mp3", title: "RED EYE", artist: "Kanye West" }
     ]
   },
+
+  {
+    name: "TEST",
+    cover: "bullycover.jpg",
+    link: "https://peace345.github.io",
+    songs: [
+      { file: "press.mp3", title: "PRESS", artist: "Kanye West" },
+      { file: "hideyourbitch.mp3", title: "HIDE YO BITCH", artist: "Kanye West, JPEGMAFIA" },
+      { file: "darkmatter.mp3", title: "DARK MATTER", artist: "Kanye West" },
+      { file: "highsandlows.mp3", title: "HIGHS AND LOWS (v38)", artist: "Kanye West, Saintboy" },
+      { file: "tina.mp3", title: "TINA", artist: "Kanye West, The Game" },
+      { file: "ohnomyhoodie.mp3", title: "OH NO MY HOODIE", artist: "Kanye West" },
+      { file: "missioncontrol.mp3", title: "MISSION CONTROL", artist: "Kanye West, Tony Williams" },
+      { file: "highsandlowsv1.mp3", title: "HIGHS AND LOWS (v1)", artist: "Kanye West" },
+      { file: "highsandlowsv22.mp3", title: "HIGHS AND LOWS (v22)", artist: "Kanye West" },
+      { file: "redeye.mp3", title: "RED EYE", artist: "Kanye West" }
+    ]
+  },
 ];
 
 // --------------------
@@ -637,13 +655,18 @@ albums.forEach((album, i) => {
 // OPEN ALBUM (NO AUTO PLAY)
 // --------------------
 function openAlbum(i) {
-  currentAlbum = albums[i];
+  const album = albums[i];
 
-  library.style.display = "none";
-  player.style.display = "block";
+  if (album.link) {
+    window.location.href = album.link;
+    return;
+  }
 
-  document.getElementById("albumTitle").innerText = currentAlbum.name;
-  document.getElementById("cover").src = currentAlbum.cover;
+  currentAlbum = album;
+  currentIndex = 0;
+
+  document.getElementById("albumTitle").innerText = album.name;
+  document.getElementById("cover").src = album.cover;
 
   buildSongs();
 }
