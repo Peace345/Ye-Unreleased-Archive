@@ -12,15 +12,6 @@
       font-family: Arial;
     }
 
-    <input
-  type="text"
-  id="searchBar"
-  placeholder="🔍 Search songs..."
-  oninput="searchSongs()"
-/>
-
-<div id="searchResults"></div>
-
     /* LIBRARY */
     .library {
       display: grid;
@@ -96,44 +87,21 @@
       font-size: 13px;
       text-align: center;
     }
-
-   #searchBar {
-      width: 90%;
-      max-width: 500px;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 10px;
-      margin: 20px auto;
-      display: block;
-    }
-
-  #searchResults {
-      width: 90%;
-      max-width: 600px;
-      margin: 0 auto;
-  }
-
-  .search-result {
-      padding: 10px;
-      margin: 5px 0;
-      cursor: pointer;
-      border-radius: 8px;
-  }
   </style>
 </head>
 
 <body>
 
-<!--  -->
-<div id="" class=""></div>
+<!-- LIBRARY -->
+<div id="library" class="library"></div>
 
-<div id="Stats" class="-stats"></div>
+<div id="libraryStats" class="library-stats"></div>
 
 <!-- PLAYER -->
 <div id="player" class="player">
 
   <button onclick="goBack()">← Back</button>
-  <button onclick="toggleShuffle()">🔀 Shuffle</button>
+  <button onclick="shufflePlay()">🔀 Shuffle</button>
   <button onclick="togglePlay()">▶️ / ⏸</button>
   <button onclick="back10()">⏪ 10s</button>
   <button onclick="forward10()">⏩ 10s</button>
@@ -154,16 +122,15 @@
 
 <script>
 
-let Mode = false;
+let shuffleMode = false;
 
 const audio = document.getElementById("audio");
-const = document.getElementById("");
+const library = document.getElementById("library");
 const player = document.getElementById("player");
 const nowPlaying = document.getElementById("nowPlaying");
 
-let currentAlbum;
+let currentAlbum = null;
 let currentIndex = 0;
-let shuffleMode = false;
 
 // --------------------
 // YOUR ALBUMS
@@ -651,7 +618,7 @@ const albums = [
 ];
 
 // --------------------
-// BUILD 
+// BUILD LIBRARY
 // --------------------
 albums.forEach((album, i) => {
   const div = document.createElement("div");
@@ -663,7 +630,7 @@ albums.forEach((album, i) => {
   `;
 
   div.onclick = () => openAlbum(i);
-  .appendChild(div);
+  library.appendChild(div);
 });
 
 // --------------------
@@ -732,23 +699,11 @@ function highlight(i) {
 // NEXT SONG (AUTO)
 // --------------------
 audio.addEventListener("ended", () => {
-  if (shuffleMode) {
-    shufflePlay();
-  } else {
-    if (!currentAlbum) return;
+  if (!currentAlbum) return;
 
-    currentIndex = (currentIndex + 1) % currentAlbum.songs.length;
-    playSong(currentIndex);
-  }
+  currentIndex = (currentIndex + 1) % currentAlbum.songs.length;
+  playSong(currentIndex);
 });
-
-  function toggleShuffle() {
-  shuffleMode = !shuffleMode;
-
-  if (shuffleMode) {
-    shufflePlay();
-  }
-}
 
 // --------------------
 // BACK TO LIBRARY
@@ -853,52 +808,6 @@ function updateLibraryStats() {
 }
 
 updateLibraryStats();
-
-function searchSongs() {
-  const query = document
-    .getElementById("searchBar")
-    .value
-    .toLowerCase();
-
-  const resultsDiv = document.getElementById("searchResults");
-
-  if (!query) {
-    resultsDiv.innerHTML = "";
-    return;
-  }
-
-  const allSongs = getAllSongs();
-
-  const matches = allSongs.filter(song =>
-    song.title.toLowerCase().includes(query) ||
-    song.artist.toLowerCase().includes(query)
-  );
-
-  resultsDiv.innerHTML = matches
-    .map((song, index) => `
-      <div class="search-result" onclick="playSearchResult(${index})">
-        <strong>${song.title}</strong><br>
-        ${song.artist}
-      </div>
-    `)
-    .join("");
-
-  window.searchMatches = matches;
-}
-
-function playSearchResult(index) {
-  const song = window.searchMatches[index];
-
-  currentAlbum = albums.find(
-    a => a.name === song.albumName
-  );
-
-  currentIndex = currentAlbum.songs.findIndex(
-    s => s.file === song.file
-  );
-
-  playSong(currentIndex);
-}
 
 </script>
 
